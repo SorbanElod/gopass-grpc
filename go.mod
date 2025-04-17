@@ -1,4 +1,4 @@
-module github.com/gopasspw/gopass
+module github.com/SorbanElod/gopass-grpc
 
 go 1.23.2
 
@@ -45,6 +45,7 @@ require (
 	golang.org/x/oauth2 v0.26.0
 	golang.org/x/sys v0.30.0
 	golang.org/x/term v0.29.0
+	google.golang.org/grpc v1.71.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -79,12 +80,13 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250115164207-1a7da9e5054f // indirect
+	google.golang.org/protobuf v1.36.4 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	rsc.io/qr v0.2.0 // indirect
 )
