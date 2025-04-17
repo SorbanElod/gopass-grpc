@@ -11,9 +11,8 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/SorbanElod/gopass-grpc/proto"
-	"github.com/SorbanElod/gopass-grpc/server"
-
+	"github.com/gopasspw/gopass/proto"
+	"github.com/gopasspw/gopass/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )

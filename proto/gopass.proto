@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package gopass;
 
-option go_package = "github.com/yourusername/gopass/grpc/proto";
+option go_package = "../proto";
 
 service GopassService {
   // Run a gopass command and get the result

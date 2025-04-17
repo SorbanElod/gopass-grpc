@@ -1,4 +1,4 @@
-module github.com/SorbanElod/gopass-grpc
+module github.com/gopasspw/gopass
 
 go 1.23.2
 
