@@ -2,7 +2,29 @@ syntax = "proto3";
 
 package gopass;
 
+option csharp_namespace= "DecentPass";
 option go_package = "../proto";
+
+service Ping {
+	  // Ping the server to check if it's alive
+  rpc Ping(PingRequest) returns (PingResponse) {}
+}
+
+message PingRequest {
+  // Optional message to send with the ping
+  string message = 1;
+}
+
+message PingResponse {
+  // Response message
+  string message = 1;
+
+  // Timestamp of the ping
+  int64 timestamp = 2;
+
+  // Success flag
+  bool success = 3;
+}
 
 service GopassService {
   // Run a gopass command and get the result

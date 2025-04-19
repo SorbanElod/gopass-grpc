@@ -21,6 +21,114 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type PingRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Optional message to send with the ping
+	Message       string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PingRequest) Reset() {
+	*x = PingRequest{}
+	mi := &file_gopass_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PingRequest) ProtoMessage() {}
+
+func (x *PingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PingRequest.ProtoReflect.Descriptor instead.
+func (*PingRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *PingRequest) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type PingResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Response message
+	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	// Timestamp of the ping
+	Timestamp int64 `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	// Success flag
+	Success       bool `protobuf:"varint,3,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PingResponse) Reset() {
+	*x = PingResponse{}
+	mi := &file_gopass_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PingResponse) ProtoMessage() {}
+
+func (x *PingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PingResponse.ProtoReflect.Descriptor instead.
+func (*PingResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *PingResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *PingResponse) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *PingResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 type CommandRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Command arguments (first element is the gopass subcommand)
@@ -37,7 +145,7 @@ type CommandRequest struct {
 
 func (x *CommandRequest) Reset() {
 	*x = CommandRequest{}
-	mi := &file_gopass_proto_msgTypes[0]
+	mi := &file_gopass_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -49,7 +157,7 @@ func (x *CommandRequest) String() string {
 func (*CommandRequest) ProtoMessage() {}
 
 func (x *CommandRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[0]
+	mi := &file_gopass_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -62,7 +170,7 @@ func (x *CommandRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandRequest.ProtoReflect.Descriptor instead.
 func (*CommandRequest) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{0}
+	return file_gopass_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CommandRequest) GetArgs() []string {
@@ -113,7 +221,7 @@ type CommandResponse struct {
 
 func (x *CommandResponse) Reset() {
 	*x = CommandResponse{}
-	mi := &file_gopass_proto_msgTypes[1]
+	mi := &file_gopass_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -125,7 +233,7 @@ func (x *CommandResponse) String() string {
 func (*CommandResponse) ProtoMessage() {}
 
 func (x *CommandResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[1]
+	mi := &file_gopass_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -138,7 +246,7 @@ func (x *CommandResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandResponse.ProtoReflect.Descriptor instead.
 func (*CommandResponse) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{1}
+	return file_gopass_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CommandResponse) GetStdout() string {
@@ -201,7 +309,7 @@ type CommandOutput struct {
 
 func (x *CommandOutput) Reset() {
 	*x = CommandOutput{}
-	mi := &file_gopass_proto_msgTypes[2]
+	mi := &file_gopass_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -213,7 +321,7 @@ func (x *CommandOutput) String() string {
 func (*CommandOutput) ProtoMessage() {}
 
 func (x *CommandOutput) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[2]
+	mi := &file_gopass_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -226,7 +334,7 @@ func (x *CommandOutput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandOutput.ProtoReflect.Descriptor instead.
 func (*CommandOutput) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{2}
+	return file_gopass_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CommandOutput) GetData() []byte {
@@ -284,7 +392,7 @@ type CommandInput struct {
 
 func (x *CommandInput) Reset() {
 	*x = CommandInput{}
-	mi := &file_gopass_proto_msgTypes[3]
+	mi := &file_gopass_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -296,7 +404,7 @@ func (x *CommandInput) String() string {
 func (*CommandInput) ProtoMessage() {}
 
 func (x *CommandInput) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[3]
+	mi := &file_gopass_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -309,7 +417,7 @@ func (x *CommandInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandInput.ProtoReflect.Descriptor instead.
 func (*CommandInput) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{3}
+	return file_gopass_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CommandInput) GetArgs() []string {
@@ -358,7 +466,13 @@ var File_gopass_proto protoreflect.FileDescriptor
 
 const file_gopass_proto_rawDesc = "" +
 	"\n" +
-	"\fgopass.proto\x12\x06gopass\"\xea\x01\n" +
+	"\fgopass.proto\x12\x06gopass\"'\n" +
+	"\vPingRequest\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"`\n" +
+	"\fPingResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\x12\x1c\n" +
+	"\ttimestamp\x18\x02 \x01(\x03R\ttimestamp\x12\x18\n" +
+	"\asuccess\x18\x03 \x01(\bR\asuccess\"\xea\x01\n" +
 	"\x0eCommandRequest\x12\x12\n" +
 	"\x04args\x18\x01 \x03(\tR\x04args\x12\x1f\n" +
 	"\vworking_dir\x18\x02 \x01(\tR\n" +
@@ -392,12 +506,14 @@ const file_gopass_proto_rawDesc = "" +
 	"\x06cancel\x18\x06 \x01(\bR\x06cancel\x1a:\n" +
 	"\fEnvVarsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\xef\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012;\n" +
+	"\x04Ping\x123\n" +
+	"\x04Ping\x12\x13.gopass.PingRequest\x1a\x14.gopass.PingResponse\"\x002\xef\x01\n" +
 	"\rGopassService\x12C\n" +
 	"\x0eExecuteCommand\x12\x16.gopass.CommandRequest\x1a\x17.gopass.CommandResponse\"\x00\x12I\n" +
 	"\x14ExecuteCommandStream\x12\x16.gopass.CommandRequest\x1a\x15.gopass.CommandOutput\"\x000\x01\x12N\n" +
-	"\x19ExecuteInteractiveCommand\x12\x14.gopass.CommandInput\x1a\x15.gopass.CommandOutput\"\x00(\x010\x01B\n" +
-	"Z\b../protob\x06proto3"
+	"\x19ExecuteInteractiveCommand\x12\x14.gopass.CommandInput\x1a\x15.gopass.CommandOutput\"\x00(\x010\x01B\x17Z\b../proto\xaa\x02\n" +
+	"DecentPassb\x06proto3"
 
 var (
 	file_gopass_proto_rawDescOnce sync.Once
@@ -411,26 +527,30 @@ func file_gopass_proto_rawDescGZIP() []byte {
 	return file_gopass_proto_rawDescData
 }
 
-var file_gopass_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_gopass_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_gopass_proto_goTypes = []any{
-	(*CommandRequest)(nil),  // 0: gopass.CommandRequest
-	(*CommandResponse)(nil), // 1: gopass.CommandResponse
-	(*CommandOutput)(nil),   // 2: gopass.CommandOutput
-	(*CommandInput)(nil),    // 3: gopass.CommandInput
-	nil,                     // 4: gopass.CommandRequest.EnvVarsEntry
-	nil,                     // 5: gopass.CommandInput.EnvVarsEntry
+	(*PingRequest)(nil),     // 0: gopass.PingRequest
+	(*PingResponse)(nil),    // 1: gopass.PingResponse
+	(*CommandRequest)(nil),  // 2: gopass.CommandRequest
+	(*CommandResponse)(nil), // 3: gopass.CommandResponse
+	(*CommandOutput)(nil),   // 4: gopass.CommandOutput
+	(*CommandInput)(nil),    // 5: gopass.CommandInput
+	nil,                     // 6: gopass.CommandRequest.EnvVarsEntry
+	nil,                     // 7: gopass.CommandInput.EnvVarsEntry
 }
 var file_gopass_proto_depIdxs = []int32{
-	4, // 0: gopass.CommandRequest.env_vars:type_name -> gopass.CommandRequest.EnvVarsEntry
-	5, // 1: gopass.CommandInput.env_vars:type_name -> gopass.CommandInput.EnvVarsEntry
-	0, // 2: gopass.GopassService.ExecuteCommand:input_type -> gopass.CommandRequest
-	0, // 3: gopass.GopassService.ExecuteCommandStream:input_type -> gopass.CommandRequest
-	3, // 4: gopass.GopassService.ExecuteInteractiveCommand:input_type -> gopass.CommandInput
-	1, // 5: gopass.GopassService.ExecuteCommand:output_type -> gopass.CommandResponse
-	2, // 6: gopass.GopassService.ExecuteCommandStream:output_type -> gopass.CommandOutput
-	2, // 7: gopass.GopassService.ExecuteInteractiveCommand:output_type -> gopass.CommandOutput
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
+	6, // 0: gopass.CommandRequest.env_vars:type_name -> gopass.CommandRequest.EnvVarsEntry
+	7, // 1: gopass.CommandInput.env_vars:type_name -> gopass.CommandInput.EnvVarsEntry
+	0, // 2: gopass.Ping.Ping:input_type -> gopass.PingRequest
+	2, // 3: gopass.GopassService.ExecuteCommand:input_type -> gopass.CommandRequest
+	2, // 4: gopass.GopassService.ExecuteCommandStream:input_type -> gopass.CommandRequest
+	5, // 5: gopass.GopassService.ExecuteInteractiveCommand:input_type -> gopass.CommandInput
+	1, // 6: gopass.Ping.Ping:output_type -> gopass.PingResponse
+	3, // 7: gopass.GopassService.ExecuteCommand:output_type -> gopass.CommandResponse
+	4, // 8: gopass.GopassService.ExecuteCommandStream:output_type -> gopass.CommandOutput
+	4, // 9: gopass.GopassService.ExecuteInteractiveCommand:output_type -> gopass.CommandOutput
+	6, // [6:10] is the sub-list for method output_type
+	2, // [2:6] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
@@ -447,9 +567,9 @@ func file_gopass_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gopass_proto_rawDesc), len(file_gopass_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_gopass_proto_goTypes,
 		DependencyIndexes: file_gopass_proto_depIdxs,
