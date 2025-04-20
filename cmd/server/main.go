@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"os/exec"
@@ -21,69 +20,87 @@ func main() {
 	// Parse command line flags
 	port := flag.Int("port", 50051, "The gRPC server port")
 	gopassPath := flag.String("gopass", "", "Path to gopass binary")
+	debugLog := flag.Bool("debug", false, "Enable debug logging")
+	logFile := flag.String("log", "", "Path to log file (default: stdout)")
 	flag.Parse()
+
+	// Create logger
+	logger := server.NewDefaultLogger(*debugLog)
+
+	// Set up log file if specified
+	if *logFile != "" {
+		logOutput, err := os.OpenFile(*logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			logger.Errorf("Failed to open log file: %v", err)
+			os.Exit(1)
+		}
+		defer logOutput.Close()
+		logger.SetOutput(logOutput)
+	}
+
+	logger.Infof("Starting gopass gRPC server (debug: %v)", *debugLog)
 
 	// Find gopass binary if not specified
 	binaryPath := *gopassPath
 	if binaryPath == "" {
-		// Try to find it in PATH
+		logger.Debugf("No gopass path specified, searching in PATH")
 		var err error
 		binaryPath, err = exec.LookPath("gopass")
 		if err != nil {
-			// If not in PATH, try to use the same binary as this server
 			exePath, err := os.Executable()
 			if err != nil {
-				log.Fatalf("Failed to get executable path: %v", err)
+				logger.Errorf("Failed to get executable path: %v", err)
+				os.Exit(1)
 			}
 
-			// Try to find gopass in the same directory
 			dirPath := filepath.Dir(exePath)
 			possiblePath := filepath.Join(dirPath, "gopass")
 			if _, err := os.Stat(possiblePath); err == nil {
 				binaryPath = possiblePath
+				logger.Debugf("Found gopass binary in same directory: %s", possiblePath)
 			} else {
-				log.Fatalf("Could not find gopass binary. Please specify with -gopass flag.")
+				logger.Errorf("Could not find gopass binary: %v", err)
+				os.Exit(1)
 			}
 		}
 	}
 
-	// Verify gopass binary exists and is executable
+	// Verify gopass binary
 	if _, err := os.Stat(binaryPath); err != nil {
-		log.Fatalf("Gopass binary not found at %s: %v", binaryPath, err)
+		logger.Errorf("Gopass binary not found at %s: %v", binaryPath, err)
+		os.Exit(1)
 	}
 
-	log.Printf("Using gopass binary: %s", binaryPath)
+	logger.Infof("Using gopass binary: %s", binaryPath)
 
 	// Create listener
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
-		log.Fatalf("Failed to listen on port %d: %v", *port, err)
+		logger.Errorf("Failed to listen on port %d: %v", *port, err)
+		os.Exit(1)
 	}
 
-	// Create a new server
+	// Create gRPC server
 	grpcServer := grpc.NewServer()
 
-	// Create the gopass server implementation
-	gopassServer := server.NewGopassServer(binaryPath)
-
-	// Register the server with gRPC
+	// Create and register gopass server
+	gopassServer := server.NewGopassServer(binaryPath, logger)
 	proto.RegisterGopassServiceServer(grpcServer, gopassServer)
-
-	// Register reflection service (optional, helps with debugging)
 	reflection.Register(grpcServer)
 
-	// Handle shutdown signals gracefully
+	// Handle shutdown signals
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-sigChan
-		log.Println("Shutting down gRPC server...")
+		logger.Infof("Received shutdown signal, gracefully stopping server...")
 		grpcServer.GracefulStop()
 	}()
 
 	// Start server
-	log.Printf("Starting gopass gRPC server on :%d", *port)
+	logger.Infof("Server listening on :%d", *port)
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+		logger.Errorf("Server failed: %v", err)
+		os.Exit(1)
 	}
 }
