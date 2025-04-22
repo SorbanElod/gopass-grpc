@@ -19,21 +19,41 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GopassService_ExecuteCommand_FullMethodName            = "/gopass.GopassService/ExecuteCommand"
-	GopassService_ExecuteCommandStream_FullMethodName      = "/gopass.GopassService/ExecuteCommandStream"
-	GopassService_ExecuteInteractiveCommand_FullMethodName = "/gopass.GopassService/ExecuteInteractiveCommand"
+	GopassService_ListSecrets_FullMethodName                = "/gopass.GopassService/ListSecrets"
+	GopassService_GetSecret_FullMethodName                  = "/gopass.GopassService/GetSecret"
+	GopassService_SetSecret_FullMethodName                  = "/gopass.GopassService/SetSecret"
+	GopassService_RemoveSecret_FullMethodName               = "/gopass.GopassService/RemoveSecret"
+	GopassService_RemoveAllSecretsWithPrefix_FullMethodName = "/gopass.GopassService/RemoveAllSecretsWithPrefix"
+	GopassService_RenameSecret_FullMethodName               = "/gopass.GopassService/RenameSecret"
+	GopassService_SyncSecret_FullMethodName                 = "/gopass.GopassService/SyncSecret"
+	GopassService_RevisionsOfSercret_FullMethodName         = "/gopass.GopassService/RevisionsOfSercret"
+	GopassService_Authenticate_FullMethodName               = "/gopass.GopassService/Authenticate"
 )
 
 // GopassServiceClient is the client API for GopassService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// The GoPassService defines the service methods.
 type GopassServiceClient interface {
-	// Run a gopass command and get the result
-	ExecuteCommand(ctx context.Context, in *CommandRequest, opts ...grpc.CallOption) (*CommandResponse, error)
-	// Run a command and stream the output
-	ExecuteCommandStream(ctx context.Context, in *CommandRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[CommandOutput], error)
-	// Interactive command with input and output streams
-	ExecuteInteractiveCommand(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CommandInput, CommandOutput], error)
+	// List returns a list of all secrets.
+	ListSecrets(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	// Get returns a single, encrypted secret.
+	GetSecret(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	// Set adds a new revision to an existing secret or creates a new one.
+	SetSecret(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*SetResponse, error)
+	// Remove removes a single secret.
+	RemoveSecret(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error)
+	// RemoveAll removes all secrets with a given prefix.
+	RemoveAllSecretsWithPrefix(ctx context.Context, in *RemoveAllRequest, opts ...grpc.CallOption) (*RemoveAllResponse, error)
+	// Rename moves a prefix to another.
+	RenameSecret(ctx context.Context, in *RenameRequest, opts ...grpc.CallOption) (*RenameResponse, error)
+	// Sync synchronizes a secret with a remote.
+	SyncSecret(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error)
+	// Revisions lists all revisions of a secret.
+	RevisionsOfSercret(ctx context.Context, in *RevisionsRequest, opts ...grpc.CallOption) (*RevisionsResponse, error)
+	// Authenticates the user with the given credentials.
+	Authenticate(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 }
 
 type gopassServiceClient struct {
@@ -44,58 +64,120 @@ func NewGopassServiceClient(cc grpc.ClientConnInterface) GopassServiceClient {
 	return &gopassServiceClient{cc}
 }
 
-func (c *gopassServiceClient) ExecuteCommand(ctx context.Context, in *CommandRequest, opts ...grpc.CallOption) (*CommandResponse, error) {
+func (c *gopassServiceClient) ListSecrets(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CommandResponse)
-	err := c.cc.Invoke(ctx, GopassService_ExecuteCommand_FullMethodName, in, out, cOpts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, GopassService_ListSecrets_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gopassServiceClient) ExecuteCommandStream(ctx context.Context, in *CommandRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[CommandOutput], error) {
+func (c *gopassServiceClient) GetSecret(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &GopassService_ServiceDesc.Streams[0], GopassService_ExecuteCommandStream_FullMethodName, cOpts...)
+	out := new(GetResponse)
+	err := c.cc.Invoke(ctx, GopassService_GetSecret_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[CommandRequest, CommandOutput]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
 
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GopassService_ExecuteCommandStreamClient = grpc.ServerStreamingClient[CommandOutput]
-
-func (c *gopassServiceClient) ExecuteInteractiveCommand(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CommandInput, CommandOutput], error) {
+func (c *gopassServiceClient) SetSecret(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &GopassService_ServiceDesc.Streams[1], GopassService_ExecuteInteractiveCommand_FullMethodName, cOpts...)
+	out := new(SetResponse)
+	err := c.cc.Invoke(ctx, GopassService_SetSecret_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[CommandInput, CommandOutput]{ClientStream: stream}
-	return x, nil
+	return out, nil
 }
 
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GopassService_ExecuteInteractiveCommandClient = grpc.BidiStreamingClient[CommandInput, CommandOutput]
+func (c *gopassServiceClient) RemoveSecret(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveResponse)
+	err := c.cc.Invoke(ctx, GopassService_RemoveSecret_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gopassServiceClient) RemoveAllSecretsWithPrefix(ctx context.Context, in *RemoveAllRequest, opts ...grpc.CallOption) (*RemoveAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveAllResponse)
+	err := c.cc.Invoke(ctx, GopassService_RemoveAllSecretsWithPrefix_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gopassServiceClient) RenameSecret(ctx context.Context, in *RenameRequest, opts ...grpc.CallOption) (*RenameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RenameResponse)
+	err := c.cc.Invoke(ctx, GopassService_RenameSecret_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gopassServiceClient) SyncSecret(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SyncResponse)
+	err := c.cc.Invoke(ctx, GopassService_SyncSecret_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gopassServiceClient) RevisionsOfSercret(ctx context.Context, in *RevisionsRequest, opts ...grpc.CallOption) (*RevisionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RevisionsResponse)
+	err := c.cc.Invoke(ctx, GopassService_RevisionsOfSercret_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gopassServiceClient) Authenticate(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthResponse)
+	err := c.cc.Invoke(ctx, GopassService_Authenticate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
 // GopassServiceServer is the server API for GopassService service.
 // All implementations must embed UnimplementedGopassServiceServer
 // for forward compatibility.
+//
+// The GoPassService defines the service methods.
 type GopassServiceServer interface {
-	// Run a gopass command and get the result
-	ExecuteCommand(context.Context, *CommandRequest) (*CommandResponse, error)
-	// Run a command and stream the output
-	ExecuteCommandStream(*CommandRequest, grpc.ServerStreamingServer[CommandOutput]) error
-	// Interactive command with input and output streams
-	ExecuteInteractiveCommand(grpc.BidiStreamingServer[CommandInput, CommandOutput]) error
+	// List returns a list of all secrets.
+	ListSecrets(context.Context, *ListRequest) (*ListResponse, error)
+	// Get returns a single, encrypted secret.
+	GetSecret(context.Context, *GetRequest) (*GetResponse, error)
+	// Set adds a new revision to an existing secret or creates a new one.
+	SetSecret(context.Context, *SetRequest) (*SetResponse, error)
+	// Remove removes a single secret.
+	RemoveSecret(context.Context, *RemoveRequest) (*RemoveResponse, error)
+	// RemoveAll removes all secrets with a given prefix.
+	RemoveAllSecretsWithPrefix(context.Context, *RemoveAllRequest) (*RemoveAllResponse, error)
+	// Rename moves a prefix to another.
+	RenameSecret(context.Context, *RenameRequest) (*RenameResponse, error)
+	// Sync synchronizes a secret with a remote.
+	SyncSecret(context.Context, *SyncRequest) (*SyncResponse, error)
+	// Revisions lists all revisions of a secret.
+	RevisionsOfSercret(context.Context, *RevisionsRequest) (*RevisionsResponse, error)
+	// Authenticates the user with the given credentials.
+	Authenticate(context.Context, *AuthRequest) (*AuthResponse, error)
 	mustEmbedUnimplementedGopassServiceServer()
 }
 
@@ -106,14 +188,32 @@ type GopassServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGopassServiceServer struct{}
 
-func (UnimplementedGopassServiceServer) ExecuteCommand(context.Context, *CommandRequest) (*CommandResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExecuteCommand not implemented")
+func (UnimplementedGopassServiceServer) ListSecrets(context.Context, *ListRequest) (*ListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSecrets not implemented")
 }
-func (UnimplementedGopassServiceServer) ExecuteCommandStream(*CommandRequest, grpc.ServerStreamingServer[CommandOutput]) error {
-	return status.Errorf(codes.Unimplemented, "method ExecuteCommandStream not implemented")
+func (UnimplementedGopassServiceServer) GetSecret(context.Context, *GetRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSecret not implemented")
 }
-func (UnimplementedGopassServiceServer) ExecuteInteractiveCommand(grpc.BidiStreamingServer[CommandInput, CommandOutput]) error {
-	return status.Errorf(codes.Unimplemented, "method ExecuteInteractiveCommand not implemented")
+func (UnimplementedGopassServiceServer) SetSecret(context.Context, *SetRequest) (*SetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSecret not implemented")
+}
+func (UnimplementedGopassServiceServer) RemoveSecret(context.Context, *RemoveRequest) (*RemoveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveSecret not implemented")
+}
+func (UnimplementedGopassServiceServer) RemoveAllSecretsWithPrefix(context.Context, *RemoveAllRequest) (*RemoveAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveAllSecretsWithPrefix not implemented")
+}
+func (UnimplementedGopassServiceServer) RenameSecret(context.Context, *RenameRequest) (*RenameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenameSecret not implemented")
+}
+func (UnimplementedGopassServiceServer) SyncSecret(context.Context, *SyncRequest) (*SyncResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncSecret not implemented")
+}
+func (UnimplementedGopassServiceServer) RevisionsOfSercret(context.Context, *RevisionsRequest) (*RevisionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevisionsOfSercret not implemented")
+}
+func (UnimplementedGopassServiceServer) Authenticate(context.Context, *AuthRequest) (*AuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Authenticate not implemented")
 }
 func (UnimplementedGopassServiceServer) mustEmbedUnimplementedGopassServiceServer() {}
 func (UnimplementedGopassServiceServer) testEmbeddedByValue()                       {}
@@ -136,41 +236,167 @@ func RegisterGopassServiceServer(s grpc.ServiceRegistrar, srv GopassServiceServe
 	s.RegisterService(&GopassService_ServiceDesc, srv)
 }
 
-func _GopassService_ExecuteCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CommandRequest)
+func _GopassService_ListSecrets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GopassServiceServer).ExecuteCommand(ctx, in)
+		return srv.(GopassServiceServer).ListSecrets(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: GopassService_ExecuteCommand_FullMethodName,
+		FullMethod: GopassService_ListSecrets_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GopassServiceServer).ExecuteCommand(ctx, req.(*CommandRequest))
+		return srv.(GopassServiceServer).ListSecrets(ctx, req.(*ListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GopassService_ExecuteCommandStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(CommandRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _GopassService_GetSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(GopassServiceServer).ExecuteCommandStream(m, &grpc.GenericServerStream[CommandRequest, CommandOutput]{ServerStream: stream})
+	if interceptor == nil {
+		return srv.(GopassServiceServer).GetSecret(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_GetSecret_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).GetSecret(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GopassService_ExecuteCommandStreamServer = grpc.ServerStreamingServer[CommandOutput]
-
-func _GopassService_ExecuteInteractiveCommand_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(GopassServiceServer).ExecuteInteractiveCommand(&grpc.GenericServerStream[CommandInput, CommandOutput]{ServerStream: stream})
+func _GopassService_SetSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GopassServiceServer).SetSecret(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_SetSecret_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).SetSecret(ctx, req.(*SetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GopassService_ExecuteInteractiveCommandServer = grpc.BidiStreamingServer[CommandInput, CommandOutput]
+func _GopassService_RemoveSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GopassServiceServer).RemoveSecret(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_RemoveSecret_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).RemoveSecret(ctx, req.(*RemoveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GopassService_RemoveAllSecretsWithPrefix_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GopassServiceServer).RemoveAllSecretsWithPrefix(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_RemoveAllSecretsWithPrefix_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).RemoveAllSecretsWithPrefix(ctx, req.(*RemoveAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GopassService_RenameSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GopassServiceServer).RenameSecret(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_RenameSecret_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).RenameSecret(ctx, req.(*RenameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GopassService_SyncSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GopassServiceServer).SyncSecret(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_SyncSecret_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).SyncSecret(ctx, req.(*SyncRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GopassService_RevisionsOfSercret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevisionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GopassServiceServer).RevisionsOfSercret(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_RevisionsOfSercret_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).RevisionsOfSercret(ctx, req.(*RevisionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GopassService_Authenticate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GopassServiceServer).Authenticate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GopassService_Authenticate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GopassServiceServer).Authenticate(ctx, req.(*AuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
 
 // GopassService_ServiceDesc is the grpc.ServiceDesc for GopassService service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -180,22 +406,42 @@ var GopassService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GopassServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ExecuteCommand",
-			Handler:    _GopassService_ExecuteCommand_Handler,
-		},
-	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "ExecuteCommandStream",
-			Handler:       _GopassService_ExecuteCommandStream_Handler,
-			ServerStreams: true,
+			MethodName: "ListSecrets",
+			Handler:    _GopassService_ListSecrets_Handler,
 		},
 		{
-			StreamName:    "ExecuteInteractiveCommand",
-			Handler:       _GopassService_ExecuteInteractiveCommand_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
+			MethodName: "GetSecret",
+			Handler:    _GopassService_GetSecret_Handler,
+		},
+		{
+			MethodName: "SetSecret",
+			Handler:    _GopassService_SetSecret_Handler,
+		},
+		{
+			MethodName: "RemoveSecret",
+			Handler:    _GopassService_RemoveSecret_Handler,
+		},
+		{
+			MethodName: "RemoveAllSecretsWithPrefix",
+			Handler:    _GopassService_RemoveAllSecretsWithPrefix_Handler,
+		},
+		{
+			MethodName: "RenameSecret",
+			Handler:    _GopassService_RenameSecret_Handler,
+		},
+		{
+			MethodName: "SyncSecret",
+			Handler:    _GopassService_SyncSecret_Handler,
+		},
+		{
+			MethodName: "RevisionsOfSercret",
+			Handler:    _GopassService_RevisionsOfSercret_Handler,
+		},
+		{
+			MethodName: "Authenticate",
+			Handler:    _GopassService_Authenticate_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "gopass.proto",
 }

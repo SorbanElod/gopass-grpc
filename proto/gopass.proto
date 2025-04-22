@@ -2,87 +2,99 @@ syntax = "proto3";
 
 package gopass;
 
-option csharp_namespace= "Gopass";
+option csharp_namespace = "Gopass";
 option go_package = "../proto";
 
+// The GoPassService defines the service methods.
 service GopassService {
-  // Run a gopass command and get the result
-  rpc ExecuteCommand(CommandRequest) returns (CommandResponse) {}
-  
-  // Run a command and stream the output
-  rpc ExecuteCommandStream(CommandRequest) returns (stream CommandOutput) {}
-  
-  // Interactive command with input and output streams
-  rpc ExecuteInteractiveCommand(stream CommandInput) returns (stream CommandOutput) {}
+
+    // List returns a list of all secrets.
+    rpc ListSecrets (ListRequest) returns (ListResponse);
+    
+    // Get returns a single, encrypted secret.
+    rpc GetSecret (GetRequest) returns (GetResponse);
+    
+    // Set adds a new revision to an existing secret or creates a new one.
+    rpc SetSecret (SetRequest) returns (SetResponse);
+    
+    // Remove removes a single secret.
+    rpc RemoveSecret (RemoveRequest) returns (RemoveResponse);
+    
+    // RemoveAll removes all secrets with a given prefix.
+    rpc RemoveAllSecretsWithPrefix (RemoveAllRequest) returns (RemoveAllResponse);
+    
+    // Rename moves a prefix to another.
+    rpc RenameSecret (RenameRequest) returns (RenameResponse);
+    
+    // Sync synchronizes a secret with a remote.
+    rpc SyncSecret (SyncRequest) returns (SyncResponse);
+    
+    // Revisions lists all revisions of a secret.
+    rpc RevisionsOfSercret (RevisionsRequest) returns (RevisionsResponse);
+
+    // Authenticates the user with the given credentials.
+    rpc Authenticate (AuthRequest) returns (AuthResponse);
 }
 
-message CommandRequest {
-  // Command arguments (first element is the gopass subcommand)
-  repeated string args = 1;
-  
-  // Working directory for the command
-  string working_dir = 2;
-  
-  // Environment variables
-  map<string, string> env_vars = 3;
-  
-  // Timeout in seconds (0 means no timeout)
-  int32 timeout_seconds = 4;
+// Request and response types
+
+message ListRequest {}
+
+message ListResponse {
+    repeated string secrets = 1;
 }
 
-message CommandResponse {
-  // Standard output
-  string stdout = 1;
-  
-  // Standard error
-  string stderr = 2;
-  
-  // Exit code (0 means success)
-  int32 exit_code = 3;
-  
-  // Success flag
-  bool success = 4;
-  
-  // Error message if command couldn't be executed
-  string error_message = 5;
-  
-  // Execution time in milliseconds
-  int64 execution_time_ms = 6;
+message GetRequest {
+    string name = 1;
+    string revision = 2;
 }
 
-message CommandOutput {
-  // Output data (stdout or stderr)
-  bytes data = 1;
-  
-  // Whether this is from stderr
-  bool is_stderr = 2;
-  
-  // Whether this is the final message
-  bool is_final = 3;
-  
-  // Exit code (only set in final message)
-  int32 exit_code = 4;
-  
-  // Error message (only set in final message)
-  string error_message = 5;
+message GetResponse {
+    string secret = 1; // The encrypted secret
 }
 
-message CommandInput {
-  // Command arguments (only in first message)
-  repeated string args = 1;
-  
-  // Input data to send to process
-  bytes input = 2;
-  
-  // Whether to close stdin after this message
-  bool close_stdin = 3;
-  
-  // Working directory (only in first message)
-  string working_dir = 4;
-  
-  // Environment variables (only in first message)
-  map<string, string> env_vars = 5;
-  
-  // Whether to cancel the command
-  bool cancel = 6;
+message SetRequest {
+    string name = 1;
+    string secret = 2; // The encrypted secret
+}
+
+message SetResponse {}
+
+message RemoveRequest {
+    string name = 1;
+}
+
+message RemoveResponse {}
+
+message RemoveAllRequest {
+    string prefix = 1;
+}
+
+message RemoveAllResponse {}
+
+message RenameRequest {
+    string src = 1;
+    string dest = 2;
+}
+
+message RenameResponse {}
+
+message SyncRequest {}
+
+message SyncResponse {}
+
+message RevisionsRequest {
+    string name = 1;
+}
+
+message RevisionsResponse {
+    repeated string revisions = 1;
+}
+
+message AuthRequest {
+    string passphrase = 1;
+}
+
+message AuthResponse {
+    string status = 1;
 }

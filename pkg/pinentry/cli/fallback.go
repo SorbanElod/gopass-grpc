@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/gopasspw/gopass/pkg/termio"
 )
@@ -10,6 +11,25 @@ import (
 // Client is pinentry CLI drop-in.
 type Client struct {
 	repeat bool
+}
+
+var (
+	overridePassphrase string
+	mu                 sync.RWMutex
+)
+
+// InjectPassphrase allows the server to inject a passphrase.
+func InjectPassphrase(pass string) {
+	mu.Lock()
+	defer mu.Unlock()
+	overridePassphrase = pass
+}
+
+// ClearPassphrase clears the override.
+func ClearPassphrase() {
+	mu.Lock()
+	defer mu.Unlock()
+	overridePassphrase = ""
 }
 
 // New creates a new client.

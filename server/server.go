@@ -3,379 +3,135 @@ package server
 import (
 	"context"
 	"fmt"
-	"io"
-	"os/exec"
-	"strings"
-	"sync"
 	"time"
 
+	"github.com/gopasspw/gopass/pkg/gopass/api"
+	"github.com/gopasspw/gopass/pkg/pinentry/cli"
 	"github.com/gopasspw/gopass/proto"
 )
 
-// GopassServer handles gRPC requests and interfaces with the gopass CLI
+// GopassServer handles gRPC requests and interfaces with the gopass API.
 type GopassServer struct {
-	GopassBinary    string
-	RunningCommands map[string]*exec.Cmd
-	CommandsMutex   sync.Mutex
-	logger          Logger
+	gopass *api.Gopass
 	proto.UnimplementedGopassServiceServer
+	logger Logger
 }
 
-// NewGopassServer creates a new server instance
-func NewGopassServer(gopassPath string, logger Logger) *GopassServer {
-	if logger == nil {
-		logger = NewDefaultLogger(false)
+// ByteWrapper is a custom type that implements the gopass.Byter interface.
+type ByteWrapper []byte
+
+// Bytes implements the gopass.Byter interface.
+func (b ByteWrapper) Bytes() []byte {
+	return b
+}
+
+// NewGopassServer creates a new server instance.
+func NewGopassServer(logger Logger) (*GopassServer, error) {
+	// Initialize the Gopass API
+	gp, err := api.New(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize gopass: %w", err)
 	}
+
 	return &GopassServer{
-		GopassBinary:    gopassPath,
-		RunningCommands: make(map[string]*exec.Cmd),
-		logger:          logger,
-	}
+		gopass: gp,
+		logger: logger,
+	}, nil
 }
 
-// ExecuteCommand runs a gopass command and returns the result
-func (s *GopassServer) ExecuteCommand(ctx context.Context, req *proto.CommandRequest) (*proto.CommandResponse, error) {
-	s.logger.Debugf("ExecuteCommand called with args: %v", req.Args)
-	startTime := time.Now()
+// Authenticate handles authentication requests.
+func (s *GopassServer) Authenticate(ctx context.Context, req *proto.AuthRequest) (*proto.AuthResponse, error) {
+	cli.InjectPassphrase(req.Passphrase)
+	return &proto.AuthResponse{Status: "authenticated"}, nil
+}
 
-	if len(req.Args) == 0 {
-		err := fmt.Errorf("no command arguments provided")
-		s.logger.Errorf("ExecuteCommand error: %v", err)
+// ListSecrets returns a list of all secrets.
+func (s *GopassServer) ListSecrets(ctx context.Context, req *proto.ListRequest) (*proto.ListResponse, error) {
+	secrets, err := s.gopass.List(ctx)
+	if err != nil {
+		s.logger.Errorf("Failed to list secrets: %v", err)
 		return nil, err
 	}
 
-	if req.TimeoutSeconds == 0 {
-		// no timeout specified, set a default
-		req.TimeoutSeconds = 60
-	}
+	return &proto.ListResponse{
+		Secrets: secrets,
+	}, nil
+}
 
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(req.TimeoutSeconds)*time.Second)
+// GetSecret returns a single encrypted secret.
+func (s *GopassServer) GetSecret(ctx context.Context, req *proto.GetRequest) (*proto.GetResponse, error) {
+	// Set a timeout of 60 seconds for the context
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
-	cmd := exec.CommandContext(ctx, s.GopassBinary, req.Args...)
-	s.logger.Infof("Executing command: %s", cmd.String())
-
-	if req.WorkingDir != "" {
-		cmd.Dir = req.WorkingDir
-	}
-
-	if len(req.EnvVars) > 0 {
-		cmd.Env = append(cmd.Env, formatEnvVars(req.EnvVars)...)
-	}
-
-	var stdout, stderr strings.Builder
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	commandID := fmt.Sprintf("%p", cmd)
-
-	s.CommandsMutex.Lock()
-	s.RunningCommands[commandID] = cmd
-	s.CommandsMutex.Unlock()
-
-	defer func() {
-		s.CommandsMutex.Lock()
-		delete(s.RunningCommands, commandID)
-		s.CommandsMutex.Unlock()
-	}()
-	// Run the command
-	err := cmd.Run()
-	executionTime := time.Since(startTime).Milliseconds()
-
-	resp := &proto.CommandResponse{
-		Stdout:          stdout.String(),
-		Stderr:          stderr.String(),
-		ExecutionTimeMs: executionTime,
-		Success:         err == nil,
-	}
-
+	secret, err := s.gopass.Get(ctx, req.Name, req.Revision)
 	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			resp.ExitCode = int32(exitErr.ExitCode())
-			resp.ErrorMessage = stderr.String()
-		} else {
-			resp.ErrorMessage = err.Error()
-		}
+		s.logger.Errorf("Failed to get secret %s: %v", req.Name, err)
+		return nil, err
 	}
 
-	s.logger.Debugf("Command completed in %d ms with exit code %d", executionTime, resp.ExitCode)
-	return resp, nil
+	return &proto.GetResponse{
+		Secret: string(secret.Bytes()), // The encrypted secret
+	}, nil
 }
 
-// ExecuteCommandStream executes a command and streams the output
-func (s *GopassServer) ExecuteCommandStream(req *proto.CommandRequest, stream proto.GopassService_ExecuteCommandStreamServer) error {
-	s.logger.Debugf("ExecuteCommandStream called with args: %v", req.Args)
-	defer s.logger.Debugf("ExecuteCommandStream completed for args: %v", req.Args)
+// SetSecret adds a new revision or creates a new secret.
+func (s *GopassServer) SetSecret(ctx context.Context, req *proto.SetRequest) (*proto.SetResponse, error) {
+	// Convert the secret string to a custom Byter implementation
+	secret := ByteWrapper([]byte(req.Secret))
 
-	if len(req.Args) == 0 {
-		return fmt.Errorf("no command arguments provided")
-	}
-
-	ctx := stream.Context()
-	cmd := exec.CommandContext(ctx, s.GopassBinary, req.Args...)
-
-	if req.WorkingDir != "" {
-		cmd.Dir = req.WorkingDir
-	}
-
-	if len(req.EnvVars) > 0 {
-		cmd.Env = append(cmd.Env, formatEnvVars(req.EnvVars)...)
-	}
-
-	stdoutPipe, err := cmd.StdoutPipe()
+	// Pass the custom Byter to the Set method
+	err := s.gopass.Set(ctx, req.Name, secret)
 	if err != nil {
-		return fmt.Errorf("failed to create stdout pipe: %v", err)
+		s.logger.Errorf("Failed to set secret %s: %v", req.Name, err)
+		return nil, err
 	}
 
-	stderrPipe, err := cmd.StderrPipe()
-	if err != nil {
-		return fmt.Errorf("failed to create stderr pipe: %v", err)
-	}
-
-	commandID := fmt.Sprintf("%p", cmd)
-
-	s.CommandsMutex.Lock()
-	s.RunningCommands[commandID] = cmd
-	s.CommandsMutex.Unlock()
-
-	defer func() {
-		s.CommandsMutex.Lock()
-		delete(s.RunningCommands, commandID)
-		s.CommandsMutex.Unlock()
-	}()
-
-	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("failed to start command: %v", err)
-	}
-
-	var wg sync.WaitGroup
-	wg.Add(2)
-
-	go func() {
-		defer wg.Done()
-		buffer := make([]byte, 4096)
-		for {
-			n, err := stdoutPipe.Read(buffer)
-			if n > 0 {
-				if err := stream.Send(&proto.CommandOutput{
-					Data:     buffer[:n],
-					IsStderr: false,
-				}); err != nil {
-					s.logger.Warnf("Failed to send stdout data: %v", err)
-					return
-				}
-			}
-			if err != nil {
-				break
-			}
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		buffer := make([]byte, 4096)
-		for {
-			n, err := stderrPipe.Read(buffer)
-			if n > 0 {
-				if err := stream.Send(&proto.CommandOutput{
-					Data:     buffer[:n],
-					IsStderr: true,
-				}); err != nil {
-					s.logger.Warnf("Failed to send stderr data: %v", err)
-					return
-				}
-			}
-			if err != nil {
-				break
-			}
-		}
-	}()
-
-	wg.Wait()
-	err = cmd.Wait()
-
-	exitCode := 0
-	errorMessage := ""
-	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			exitCode = exitErr.ExitCode()
-		} else {
-			errorMessage = err.Error()
-		}
-	}
-
-	return stream.Send(&proto.CommandOutput{
-		IsFinal:      true,
-		ExitCode:     int32(exitCode),
-		ErrorMessage: errorMessage,
-	})
+	return &proto.SetResponse{}, nil
 }
 
-// ExecuteInteractiveCommand handles bidirectional streaming for interactive commands
-func (s *GopassServer) ExecuteInteractiveCommand(stream proto.GopassService_ExecuteInteractiveCommandServer) error {
-	s.logger.Debugf("ExecuteInteractiveCommand started")
-	defer s.logger.Debugf("ExecuteInteractiveCommand completed")
-
-	var cmd *exec.Cmd
-	var stdin io.WriteCloser
-	var commandID string
-
-	ctx := stream.Context()
-
-	cleanup := func() {
-		if stdin != nil {
-			stdin.Close()
-		}
-		if commandID != "" {
-			s.CommandsMutex.Lock()
-			delete(s.RunningCommands, commandID)
-			s.CommandsMutex.Unlock()
-		}
-	}
-	defer cleanup()
-
-	firstMsg, err := stream.Recv()
+// RemoveSecret removes a single secret.
+func (s *GopassServer) RemoveSecret(ctx context.Context, req *proto.RemoveRequest) (*proto.RemoveResponse, error) {
+	err := s.gopass.Remove(ctx, req.Name)
 	if err != nil {
-		return fmt.Errorf("failed to receive initial command: %v", err)
+		s.logger.Errorf("Failed to remove secret %s: %v", req.Name, err)
+		return nil, err
 	}
 
-	if len(firstMsg.Args) == 0 {
-		return fmt.Errorf("no command arguments provided")
-	}
-
-	cmd = exec.CommandContext(ctx, s.GopassBinary, firstMsg.Args...)
-
-	if firstMsg.WorkingDir != "" {
-		cmd.Dir = firstMsg.WorkingDir
-	}
-
-	if len(firstMsg.EnvVars) > 0 {
-		cmd.Env = append(cmd.Env, formatEnvVars(firstMsg.EnvVars)...)
-	}
-
-	stdin, err = cmd.StdinPipe()
-	if err != nil {
-		return fmt.Errorf("failed to create stdin pipe: %v", err)
-	}
-
-	stdout, err1 := cmd.StdoutPipe()
-	stderr, err2 := cmd.StderrPipe()
-	if err1 != nil || err2 != nil {
-		return fmt.Errorf("failed to create stdout/stderr pipes")
-	}
-
-	commandID = fmt.Sprintf("%p", cmd)
-	s.CommandsMutex.Lock()
-	s.RunningCommands[commandID] = cmd
-	s.CommandsMutex.Unlock()
-
-	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("failed to start command: %v", err)
-	}
-
-	if len(firstMsg.Input) > 0 {
-		if _, err := stdin.Write(firstMsg.Input); err != nil {
-			return fmt.Errorf("failed to write to stdin: %v", err)
-		}
-	}
-
-	if firstMsg.CloseStdin {
-		stdin.Close()
-		stdin = nil
-	}
-
-	outputDone := make(chan struct{})
-	go func() {
-		defer close(outputDone)
-		stdoutBuffer := make([]byte, 4096)
-		stderrBuffer := make([]byte, 4096)
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
-
-			n, err := stdout.Read(stdoutBuffer)
-			if n > 0 {
-				if err := stream.Send(&proto.CommandOutput{
-					Data:     stdoutBuffer[:n],
-					IsStderr: false,
-				}); err != nil {
-					s.logger.Warnf("Failed to send stdout data: %v", err)
-					return
-				}
-			}
-
-			n, err = stderr.Read(stderrBuffer)
-			if n > 0 {
-				if err := stream.Send(&proto.CommandOutput{
-					Data:     stderrBuffer[:n],
-					IsStderr: true,
-				}); err != nil {
-					s.logger.Warnf("Failed to send stderr data: %v", err)
-					return
-				}
-			}
-
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				break
-			}
-		}
-	}()
-
-	for {
-		msg, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			break
-		}
-
-		if msg.Cancel {
-			cmd.Process.Kill()
-			break
-		}
-
-		if len(msg.Input) > 0 && stdin != nil {
-			if _, err := stdin.Write(msg.Input); err != nil {
-				break
-			}
-		}
-
-		if msg.CloseStdin && stdin != nil {
-			stdin.Close()
-			stdin = nil
-		}
-	}
-
-	err = cmd.Wait()
-
-	exitCode := 0
-	errorMessage := ""
-	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			exitCode = exitErr.ExitCode()
-		} else {
-			errorMessage = err.Error()
-		}
-	}
-
-	return stream.Send(&proto.CommandOutput{
-		IsFinal:      true,
-		ExitCode:     int32(exitCode),
-		ErrorMessage: errorMessage,
-	})
+	return &proto.RemoveResponse{}, nil
 }
 
-func formatEnvVars(envVars map[string]string) []string {
-	result := make([]string, 0, len(envVars))
-	for k, v := range envVars {
-		result = append(result, fmt.Sprintf("%s=%s", k, v))
+// RemoveAllSecretsWithPrefix removes all secrets with the given prefix.
+func (s *GopassServer) RemoveAllSecretsWithPrefix(ctx context.Context, req *proto.RemoveAllRequest) (*proto.RemoveAllResponse, error) {
+	err := s.gopass.RemoveAll(ctx, req.Prefix)
+	if err != nil {
+		s.logger.Errorf("Failed to remove all secrets with prefix %s: %v", req.Prefix, err)
+		return nil, err
 	}
-	return result
+
+	return &proto.RemoveAllResponse{}, nil
+}
+
+// RenameSecret moves a prefix to another.
+func (s *GopassServer) RenameSecret(ctx context.Context, req *proto.RenameRequest) (*proto.RenameResponse, error) {
+	err := s.gopass.Rename(ctx, req.Src, req.Dest)
+	if err != nil {
+		s.logger.Errorf("Failed to rename secret %s to %s: %v", req.Src, req.Dest, err)
+		return nil, err
+	}
+
+	return &proto.RenameResponse{}, nil
+}
+
+// SyncSecret synchronizes a secret with a remote.
+func (s *GopassServer) SyncSecret(ctx context.Context, req *proto.SyncRequest) (*proto.SyncResponse, error) {
+	// Sync is not implemented in the current API.
+	s.logger.Warnf("Sync secret is not implemented")
+	return nil, fmt.Errorf("sync not implemented")
+}
+
+// RevisionsOfSecret lists all revisions of a secret.
+func (s *GopassServer) RevisionsOfSecret(ctx context.Context, req *proto.RevisionsRequest) (*proto.RevisionsResponse, error) {
+	// Revisions feature is not implemented in the current API.
+	s.logger.Warnf("Revisions not implemented")
+	return nil, fmt.Errorf("revisions not implemented")
 }

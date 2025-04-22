@@ -21,34 +21,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CommandRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Command arguments (first element is the gopass subcommand)
-	Args []string `protobuf:"bytes,1,rep,name=args,proto3" json:"args,omitempty"`
-	// Working directory for the command
-	WorkingDir string `protobuf:"bytes,2,opt,name=working_dir,json=workingDir,proto3" json:"working_dir,omitempty"`
-	// Environment variables
-	EnvVars map[string]string `protobuf:"bytes,3,rep,name=env_vars,json=envVars,proto3" json:"env_vars,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// Timeout in seconds (0 means no timeout)
-	TimeoutSeconds int32 `protobuf:"varint,4,opt,name=timeout_seconds,json=timeoutSeconds,proto3" json:"timeout_seconds,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+type ListRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CommandRequest) Reset() {
-	*x = CommandRequest{}
+func (x *ListRequest) Reset() {
+	*x = ListRequest{}
 	mi := &file_gopass_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CommandRequest) String() string {
+func (x *ListRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CommandRequest) ProtoMessage() {}
+func (*ListRequest) ProtoMessage() {}
 
-func (x *CommandRequest) ProtoReflect() protoreflect.Message {
+func (x *ListRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_gopass_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -60,71 +52,32 @@ func (x *CommandRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CommandRequest.ProtoReflect.Descriptor instead.
-func (*CommandRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListRequest.ProtoReflect.Descriptor instead.
+func (*ListRequest) Descriptor() ([]byte, []int) {
 	return file_gopass_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CommandRequest) GetArgs() []string {
-	if x != nil {
-		return x.Args
-	}
-	return nil
+type ListResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Secrets       []string               `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CommandRequest) GetWorkingDir() string {
-	if x != nil {
-		return x.WorkingDir
-	}
-	return ""
-}
-
-func (x *CommandRequest) GetEnvVars() map[string]string {
-	if x != nil {
-		return x.EnvVars
-	}
-	return nil
-}
-
-func (x *CommandRequest) GetTimeoutSeconds() int32 {
-	if x != nil {
-		return x.TimeoutSeconds
-	}
-	return 0
-}
-
-type CommandResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Standard output
-	Stdout string `protobuf:"bytes,1,opt,name=stdout,proto3" json:"stdout,omitempty"`
-	// Standard error
-	Stderr string `protobuf:"bytes,2,opt,name=stderr,proto3" json:"stderr,omitempty"`
-	// Exit code (0 means success)
-	ExitCode int32 `protobuf:"varint,3,opt,name=exit_code,json=exitCode,proto3" json:"exit_code,omitempty"`
-	// Success flag
-	Success bool `protobuf:"varint,4,opt,name=success,proto3" json:"success,omitempty"`
-	// Error message if command couldn't be executed
-	ErrorMessage string `protobuf:"bytes,5,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
-	// Execution time in milliseconds
-	ExecutionTimeMs int64 `protobuf:"varint,6,opt,name=execution_time_ms,json=executionTimeMs,proto3" json:"execution_time_ms,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *CommandResponse) Reset() {
-	*x = CommandResponse{}
+func (x *ListResponse) Reset() {
+	*x = ListResponse{}
 	mi := &file_gopass_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CommandResponse) String() string {
+func (x *ListResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CommandResponse) ProtoMessage() {}
+func (*ListResponse) ProtoMessage() {}
 
-func (x *CommandResponse) ProtoReflect() protoreflect.Message {
+func (x *ListResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_gopass_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -136,83 +89,40 @@ func (x *CommandResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CommandResponse.ProtoReflect.Descriptor instead.
-func (*CommandResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListResponse.ProtoReflect.Descriptor instead.
+func (*ListResponse) Descriptor() ([]byte, []int) {
 	return file_gopass_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CommandResponse) GetStdout() string {
+func (x *ListResponse) GetSecrets() []string {
 	if x != nil {
-		return x.Stdout
+		return x.Secrets
 	}
-	return ""
+	return nil
 }
 
-func (x *CommandResponse) GetStderr() string {
-	if x != nil {
-		return x.Stderr
-	}
-	return ""
-}
-
-func (x *CommandResponse) GetExitCode() int32 {
-	if x != nil {
-		return x.ExitCode
-	}
-	return 0
-}
-
-func (x *CommandResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
-func (x *CommandResponse) GetErrorMessage() string {
-	if x != nil {
-		return x.ErrorMessage
-	}
-	return ""
-}
-
-func (x *CommandResponse) GetExecutionTimeMs() int64 {
-	if x != nil {
-		return x.ExecutionTimeMs
-	}
-	return 0
-}
-
-type CommandOutput struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Output data (stdout or stderr)
-	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	// Whether this is from stderr
-	IsStderr bool `protobuf:"varint,2,opt,name=is_stderr,json=isStderr,proto3" json:"is_stderr,omitempty"`
-	// Whether this is the final message
-	IsFinal bool `protobuf:"varint,3,opt,name=is_final,json=isFinal,proto3" json:"is_final,omitempty"`
-	// Exit code (only set in final message)
-	ExitCode int32 `protobuf:"varint,4,opt,name=exit_code,json=exitCode,proto3" json:"exit_code,omitempty"`
-	// Error message (only set in final message)
-	ErrorMessage  string `protobuf:"bytes,5,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+type GetRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Revision      string                 `protobuf:"bytes,2,opt,name=revision,proto3" json:"revision,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CommandOutput) Reset() {
-	*x = CommandOutput{}
+func (x *GetRequest) Reset() {
+	*x = GetRequest{}
 	mi := &file_gopass_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CommandOutput) String() string {
+func (x *GetRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CommandOutput) ProtoMessage() {}
+func (*GetRequest) ProtoMessage() {}
 
-func (x *CommandOutput) ProtoReflect() protoreflect.Message {
+func (x *GetRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_gopass_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -224,78 +134,46 @@ func (x *CommandOutput) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CommandOutput.ProtoReflect.Descriptor instead.
-func (*CommandOutput) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRequest.ProtoReflect.Descriptor instead.
+func (*GetRequest) Descriptor() ([]byte, []int) {
 	return file_gopass_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CommandOutput) GetData() []byte {
+func (x *GetRequest) GetName() string {
 	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-func (x *CommandOutput) GetIsStderr() bool {
-	if x != nil {
-		return x.IsStderr
-	}
-	return false
-}
-
-func (x *CommandOutput) GetIsFinal() bool {
-	if x != nil {
-		return x.IsFinal
-	}
-	return false
-}
-
-func (x *CommandOutput) GetExitCode() int32 {
-	if x != nil {
-		return x.ExitCode
-	}
-	return 0
-}
-
-func (x *CommandOutput) GetErrorMessage() string {
-	if x != nil {
-		return x.ErrorMessage
+		return x.Name
 	}
 	return ""
 }
 
-type CommandInput struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Command arguments (only in first message)
-	Args []string `protobuf:"bytes,1,rep,name=args,proto3" json:"args,omitempty"`
-	// Input data to send to process
-	Input []byte `protobuf:"bytes,2,opt,name=input,proto3" json:"input,omitempty"`
-	// Whether to close stdin after this message
-	CloseStdin bool `protobuf:"varint,3,opt,name=close_stdin,json=closeStdin,proto3" json:"close_stdin,omitempty"`
-	// Working directory (only in first message)
-	WorkingDir string `protobuf:"bytes,4,opt,name=working_dir,json=workingDir,proto3" json:"working_dir,omitempty"`
-	// Environment variables (only in first message)
-	EnvVars map[string]string `protobuf:"bytes,5,rep,name=env_vars,json=envVars,proto3" json:"env_vars,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// Whether to cancel the command
-	Cancel        bool `protobuf:"varint,6,opt,name=cancel,proto3" json:"cancel,omitempty"`
+func (x *GetRequest) GetRevision() string {
+	if x != nil {
+		return x.Revision
+	}
+	return ""
+}
+
+type GetResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"` // The encrypted secret
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CommandInput) Reset() {
-	*x = CommandInput{}
+func (x *GetResponse) Reset() {
+	*x = GetResponse{}
 	mi := &file_gopass_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CommandInput) String() string {
+func (x *GetResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CommandInput) ProtoMessage() {}
+func (*GetResponse) ProtoMessage() {}
 
-func (x *CommandInput) ProtoReflect() protoreflect.Message {
+func (x *GetResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_gopass_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -307,96 +185,654 @@ func (x *CommandInput) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CommandInput.ProtoReflect.Descriptor instead.
-func (*CommandInput) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetResponse.ProtoReflect.Descriptor instead.
+func (*GetResponse) Descriptor() ([]byte, []int) {
 	return file_gopass_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CommandInput) GetArgs() []string {
+func (x *GetResponse) GetSecret() string {
 	if x != nil {
-		return x.Args
-	}
-	return nil
-}
-
-func (x *CommandInput) GetInput() []byte {
-	if x != nil {
-		return x.Input
-	}
-	return nil
-}
-
-func (x *CommandInput) GetCloseStdin() bool {
-	if x != nil {
-		return x.CloseStdin
-	}
-	return false
-}
-
-func (x *CommandInput) GetWorkingDir() string {
-	if x != nil {
-		return x.WorkingDir
+		return x.Secret
 	}
 	return ""
 }
 
-func (x *CommandInput) GetEnvVars() map[string]string {
+type SetRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Secret        string                 `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"` // The encrypted secret
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetRequest) Reset() {
+	*x = SetRequest{}
+	mi := &file_gopass_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetRequest) ProtoMessage() {}
+
+func (x *SetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[4]
 	if x != nil {
-		return x.EnvVars
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetRequest.ProtoReflect.Descriptor instead.
+func (*SetRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SetRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *SetRequest) GetSecret() string {
+	if x != nil {
+		return x.Secret
+	}
+	return ""
+}
+
+type SetResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetResponse) Reset() {
+	*x = SetResponse{}
+	mi := &file_gopass_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetResponse) ProtoMessage() {}
+
+func (x *SetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetResponse.ProtoReflect.Descriptor instead.
+func (*SetResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{5}
+}
+
+type RemoveRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveRequest) Reset() {
+	*x = RemoveRequest{}
+	mi := &file_gopass_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveRequest) ProtoMessage() {}
+
+func (x *RemoveRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveRequest.ProtoReflect.Descriptor instead.
+func (*RemoveRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RemoveRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type RemoveResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveResponse) Reset() {
+	*x = RemoveResponse{}
+	mi := &file_gopass_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveResponse) ProtoMessage() {}
+
+func (x *RemoveResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveResponse.ProtoReflect.Descriptor instead.
+func (*RemoveResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{7}
+}
+
+type RemoveAllRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Prefix        string                 `protobuf:"bytes,1,opt,name=prefix,proto3" json:"prefix,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveAllRequest) Reset() {
+	*x = RemoveAllRequest{}
+	mi := &file_gopass_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveAllRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveAllRequest) ProtoMessage() {}
+
+func (x *RemoveAllRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveAllRequest.ProtoReflect.Descriptor instead.
+func (*RemoveAllRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *RemoveAllRequest) GetPrefix() string {
+	if x != nil {
+		return x.Prefix
+	}
+	return ""
+}
+
+type RemoveAllResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveAllResponse) Reset() {
+	*x = RemoveAllResponse{}
+	mi := &file_gopass_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveAllResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveAllResponse) ProtoMessage() {}
+
+func (x *RemoveAllResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveAllResponse.ProtoReflect.Descriptor instead.
+func (*RemoveAllResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{9}
+}
+
+type RenameRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Src           string                 `protobuf:"bytes,1,opt,name=src,proto3" json:"src,omitempty"`
+	Dest          string                 `protobuf:"bytes,2,opt,name=dest,proto3" json:"dest,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RenameRequest) Reset() {
+	*x = RenameRequest{}
+	mi := &file_gopass_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RenameRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenameRequest) ProtoMessage() {}
+
+func (x *RenameRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RenameRequest.ProtoReflect.Descriptor instead.
+func (*RenameRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *RenameRequest) GetSrc() string {
+	if x != nil {
+		return x.Src
+	}
+	return ""
+}
+
+func (x *RenameRequest) GetDest() string {
+	if x != nil {
+		return x.Dest
+	}
+	return ""
+}
+
+type RenameResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RenameResponse) Reset() {
+	*x = RenameResponse{}
+	mi := &file_gopass_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RenameResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenameResponse) ProtoMessage() {}
+
+func (x *RenameResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RenameResponse.ProtoReflect.Descriptor instead.
+func (*RenameResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{11}
+}
+
+type SyncRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SyncRequest) Reset() {
+	*x = SyncRequest{}
+	mi := &file_gopass_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SyncRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncRequest) ProtoMessage() {}
+
+func (x *SyncRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncRequest.ProtoReflect.Descriptor instead.
+func (*SyncRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{12}
+}
+
+type SyncResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SyncResponse) Reset() {
+	*x = SyncResponse{}
+	mi := &file_gopass_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SyncResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncResponse) ProtoMessage() {}
+
+func (x *SyncResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncResponse.ProtoReflect.Descriptor instead.
+func (*SyncResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{13}
+}
+
+type RevisionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevisionsRequest) Reset() {
+	*x = RevisionsRequest{}
+	mi := &file_gopass_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevisionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevisionsRequest) ProtoMessage() {}
+
+func (x *RevisionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevisionsRequest.ProtoReflect.Descriptor instead.
+func (*RevisionsRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *RevisionsRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type RevisionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Revisions     []string               `protobuf:"bytes,1,rep,name=revisions,proto3" json:"revisions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevisionsResponse) Reset() {
+	*x = RevisionsResponse{}
+	mi := &file_gopass_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevisionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevisionsResponse) ProtoMessage() {}
+
+func (x *RevisionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevisionsResponse.ProtoReflect.Descriptor instead.
+func (*RevisionsResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *RevisionsResponse) GetRevisions() []string {
+	if x != nil {
+		return x.Revisions
 	}
 	return nil
 }
 
-func (x *CommandInput) GetCancel() bool {
+type AuthRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Passphrase    string                 `protobuf:"bytes,1,opt,name=passphrase,proto3" json:"passphrase,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuthRequest) Reset() {
+	*x = AuthRequest{}
+	mi := &file_gopass_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthRequest) ProtoMessage() {}
+
+func (x *AuthRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[16]
 	if x != nil {
-		return x.Cancel
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
 	}
-	return false
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthRequest.ProtoReflect.Descriptor instead.
+func (*AuthRequest) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *AuthRequest) GetPassphrase() string {
+	if x != nil {
+		return x.Passphrase
+	}
+	return ""
+}
+
+type AuthResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuthResponse) Reset() {
+	*x = AuthResponse{}
+	mi := &file_gopass_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthResponse) ProtoMessage() {}
+
+func (x *AuthResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gopass_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthResponse.ProtoReflect.Descriptor instead.
+func (*AuthResponse) Descriptor() ([]byte, []int) {
+	return file_gopass_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *AuthResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
 }
 
 var File_gopass_proto protoreflect.FileDescriptor
 
 const file_gopass_proto_rawDesc = "" +
 	"\n" +
-	"\fgopass.proto\x12\x06gopass\"\xea\x01\n" +
-	"\x0eCommandRequest\x12\x12\n" +
-	"\x04args\x18\x01 \x03(\tR\x04args\x12\x1f\n" +
-	"\vworking_dir\x18\x02 \x01(\tR\n" +
-	"workingDir\x12>\n" +
-	"\benv_vars\x18\x03 \x03(\v2#.gopass.CommandRequest.EnvVarsEntryR\aenvVars\x12'\n" +
-	"\x0ftimeout_seconds\x18\x04 \x01(\x05R\x0etimeoutSeconds\x1a:\n" +
-	"\fEnvVarsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xc9\x01\n" +
-	"\x0fCommandResponse\x12\x16\n" +
-	"\x06stdout\x18\x01 \x01(\tR\x06stdout\x12\x16\n" +
-	"\x06stderr\x18\x02 \x01(\tR\x06stderr\x12\x1b\n" +
-	"\texit_code\x18\x03 \x01(\x05R\bexitCode\x12\x18\n" +
-	"\asuccess\x18\x04 \x01(\bR\asuccess\x12#\n" +
-	"\rerror_message\x18\x05 \x01(\tR\ferrorMessage\x12*\n" +
-	"\x11execution_time_ms\x18\x06 \x01(\x03R\x0fexecutionTimeMs\"\x9d\x01\n" +
-	"\rCommandOutput\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\x12\x1b\n" +
-	"\tis_stderr\x18\x02 \x01(\bR\bisStderr\x12\x19\n" +
-	"\bis_final\x18\x03 \x01(\bR\aisFinal\x12\x1b\n" +
-	"\texit_code\x18\x04 \x01(\x05R\bexitCode\x12#\n" +
-	"\rerror_message\x18\x05 \x01(\tR\ferrorMessage\"\x8c\x02\n" +
-	"\fCommandInput\x12\x12\n" +
-	"\x04args\x18\x01 \x03(\tR\x04args\x12\x14\n" +
-	"\x05input\x18\x02 \x01(\fR\x05input\x12\x1f\n" +
-	"\vclose_stdin\x18\x03 \x01(\bR\n" +
-	"closeStdin\x12\x1f\n" +
-	"\vworking_dir\x18\x04 \x01(\tR\n" +
-	"workingDir\x12<\n" +
-	"\benv_vars\x18\x05 \x03(\v2!.gopass.CommandInput.EnvVarsEntryR\aenvVars\x12\x16\n" +
-	"\x06cancel\x18\x06 \x01(\bR\x06cancel\x1a:\n" +
-	"\fEnvVarsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\xef\x01\n" +
-	"\rGopassService\x12C\n" +
-	"\x0eExecuteCommand\x12\x16.gopass.CommandRequest\x1a\x17.gopass.CommandResponse\"\x00\x12I\n" +
-	"\x14ExecuteCommandStream\x12\x16.gopass.CommandRequest\x1a\x15.gopass.CommandOutput\"\x000\x01\x12N\n" +
-	"\x19ExecuteInteractiveCommand\x12\x14.gopass.CommandInput\x1a\x15.gopass.CommandOutput\"\x00(\x010\x01B\x13Z\b../proto\xaa\x02\x06Gopassb\x06proto3"
+	"\fgopass.proto\x12\x06gopass\"\r\n" +
+	"\vListRequest\"(\n" +
+	"\fListResponse\x12\x18\n" +
+	"\asecrets\x18\x01 \x03(\tR\asecrets\"<\n" +
+	"\n" +
+	"GetRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
+	"\brevision\x18\x02 \x01(\tR\brevision\"%\n" +
+	"\vGetResponse\x12\x16\n" +
+	"\x06secret\x18\x01 \x01(\tR\x06secret\"8\n" +
+	"\n" +
+	"SetRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\"\r\n" +
+	"\vSetResponse\"#\n" +
+	"\rRemoveRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"\x10\n" +
+	"\x0eRemoveResponse\"*\n" +
+	"\x10RemoveAllRequest\x12\x16\n" +
+	"\x06prefix\x18\x01 \x01(\tR\x06prefix\"\x13\n" +
+	"\x11RemoveAllResponse\"5\n" +
+	"\rRenameRequest\x12\x10\n" +
+	"\x03src\x18\x01 \x01(\tR\x03src\x12\x12\n" +
+	"\x04dest\x18\x02 \x01(\tR\x04dest\"\x10\n" +
+	"\x0eRenameResponse\"\r\n" +
+	"\vSyncRequest\"\x0e\n" +
+	"\fSyncResponse\"&\n" +
+	"\x10RevisionsRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"1\n" +
+	"\x11RevisionsResponse\x12\x1c\n" +
+	"\trevisions\x18\x01 \x03(\tR\trevisions\"-\n" +
+	"\vAuthRequest\x12\x1e\n" +
+	"\n" +
+	"passphrase\x18\x01 \x01(\tR\n" +
+	"passphrase\"&\n" +
+	"\fAuthResponse\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status2\xc5\x04\n" +
+	"\rGopassService\x128\n" +
+	"\vListSecrets\x12\x13.gopass.ListRequest\x1a\x14.gopass.ListResponse\x124\n" +
+	"\tGetSecret\x12\x12.gopass.GetRequest\x1a\x13.gopass.GetResponse\x124\n" +
+	"\tSetSecret\x12\x12.gopass.SetRequest\x1a\x13.gopass.SetResponse\x12=\n" +
+	"\fRemoveSecret\x12\x15.gopass.RemoveRequest\x1a\x16.gopass.RemoveResponse\x12Q\n" +
+	"\x1aRemoveAllSecretsWithPrefix\x12\x18.gopass.RemoveAllRequest\x1a\x19.gopass.RemoveAllResponse\x12=\n" +
+	"\fRenameSecret\x12\x15.gopass.RenameRequest\x1a\x16.gopass.RenameResponse\x127\n" +
+	"\n" +
+	"SyncSecret\x12\x13.gopass.SyncRequest\x1a\x14.gopass.SyncResponse\x12I\n" +
+	"\x12RevisionsOfSercret\x12\x18.gopass.RevisionsRequest\x1a\x19.gopass.RevisionsResponse\x129\n" +
+	"\fAuthenticate\x12\x13.gopass.AuthRequest\x1a\x14.gopass.AuthResponseB\x13Z\b../proto\xaa\x02\x06Gopassb\x06proto3"
 
 var (
 	file_gopass_proto_rawDescOnce sync.Once
@@ -410,29 +846,51 @@ func file_gopass_proto_rawDescGZIP() []byte {
 	return file_gopass_proto_rawDescData
 }
 
-var file_gopass_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_gopass_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_gopass_proto_goTypes = []any{
-	(*CommandRequest)(nil),  // 0: gopass.CommandRequest
-	(*CommandResponse)(nil), // 1: gopass.CommandResponse
-	(*CommandOutput)(nil),   // 2: gopass.CommandOutput
-	(*CommandInput)(nil),    // 3: gopass.CommandInput
-	nil,                     // 4: gopass.CommandRequest.EnvVarsEntry
-	nil,                     // 5: gopass.CommandInput.EnvVarsEntry
+	(*ListRequest)(nil),       // 0: gopass.ListRequest
+	(*ListResponse)(nil),      // 1: gopass.ListResponse
+	(*GetRequest)(nil),        // 2: gopass.GetRequest
+	(*GetResponse)(nil),       // 3: gopass.GetResponse
+	(*SetRequest)(nil),        // 4: gopass.SetRequest
+	(*SetResponse)(nil),       // 5: gopass.SetResponse
+	(*RemoveRequest)(nil),     // 6: gopass.RemoveRequest
+	(*RemoveResponse)(nil),    // 7: gopass.RemoveResponse
+	(*RemoveAllRequest)(nil),  // 8: gopass.RemoveAllRequest
+	(*RemoveAllResponse)(nil), // 9: gopass.RemoveAllResponse
+	(*RenameRequest)(nil),     // 10: gopass.RenameRequest
+	(*RenameResponse)(nil),    // 11: gopass.RenameResponse
+	(*SyncRequest)(nil),       // 12: gopass.SyncRequest
+	(*SyncResponse)(nil),      // 13: gopass.SyncResponse
+	(*RevisionsRequest)(nil),  // 14: gopass.RevisionsRequest
+	(*RevisionsResponse)(nil), // 15: gopass.RevisionsResponse
+	(*AuthRequest)(nil),       // 16: gopass.AuthRequest
+	(*AuthResponse)(nil),      // 17: gopass.AuthResponse
 }
 var file_gopass_proto_depIdxs = []int32{
-	4, // 0: gopass.CommandRequest.env_vars:type_name -> gopass.CommandRequest.EnvVarsEntry
-	5, // 1: gopass.CommandInput.env_vars:type_name -> gopass.CommandInput.EnvVarsEntry
-	0, // 2: gopass.GopassService.ExecuteCommand:input_type -> gopass.CommandRequest
-	0, // 3: gopass.GopassService.ExecuteCommandStream:input_type -> gopass.CommandRequest
-	3, // 4: gopass.GopassService.ExecuteInteractiveCommand:input_type -> gopass.CommandInput
-	1, // 5: gopass.GopassService.ExecuteCommand:output_type -> gopass.CommandResponse
-	2, // 6: gopass.GopassService.ExecuteCommandStream:output_type -> gopass.CommandOutput
-	2, // 7: gopass.GopassService.ExecuteInteractiveCommand:output_type -> gopass.CommandOutput
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0,  // 0: gopass.GopassService.ListSecrets:input_type -> gopass.ListRequest
+	2,  // 1: gopass.GopassService.GetSecret:input_type -> gopass.GetRequest
+	4,  // 2: gopass.GopassService.SetSecret:input_type -> gopass.SetRequest
+	6,  // 3: gopass.GopassService.RemoveSecret:input_type -> gopass.RemoveRequest
+	8,  // 4: gopass.GopassService.RemoveAllSecretsWithPrefix:input_type -> gopass.RemoveAllRequest
+	10, // 5: gopass.GopassService.RenameSecret:input_type -> gopass.RenameRequest
+	12, // 6: gopass.GopassService.SyncSecret:input_type -> gopass.SyncRequest
+	14, // 7: gopass.GopassService.RevisionsOfSercret:input_type -> gopass.RevisionsRequest
+	16, // 8: gopass.GopassService.Authenticate:input_type -> gopass.AuthRequest
+	1,  // 9: gopass.GopassService.ListSecrets:output_type -> gopass.ListResponse
+	3,  // 10: gopass.GopassService.GetSecret:output_type -> gopass.GetResponse
+	5,  // 11: gopass.GopassService.SetSecret:output_type -> gopass.SetResponse
+	7,  // 12: gopass.GopassService.RemoveSecret:output_type -> gopass.RemoveResponse
+	9,  // 13: gopass.GopassService.RemoveAllSecretsWithPrefix:output_type -> gopass.RemoveAllResponse
+	11, // 14: gopass.GopassService.RenameSecret:output_type -> gopass.RenameResponse
+	13, // 15: gopass.GopassService.SyncSecret:output_type -> gopass.SyncResponse
+	15, // 16: gopass.GopassService.RevisionsOfSercret:output_type -> gopass.RevisionsResponse
+	17, // 17: gopass.GopassService.Authenticate:output_type -> gopass.AuthResponse
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_gopass_proto_init() }
@@ -446,7 +904,7 @@ func file_gopass_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gopass_proto_rawDesc), len(file_gopass_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
