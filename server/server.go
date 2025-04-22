@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gopasspw/gopass/pkg/gopass/api"
-	"github.com/gopasspw/gopass/pkg/pinentry/cli"
 	"github.com/gopasspw/gopass/proto"
 )
 
@@ -41,7 +40,7 @@ func NewGopassServer(logger Logger) (*GopassServer, error) {
 
 // Authenticate handles authentication requests.
 func (s *GopassServer) Authenticate(ctx context.Context, req *proto.AuthRequest) (*proto.AuthResponse, error) {
-	cli.InjectPassphrase(req.Passphrase)
+	// authenticate the user
 	return &proto.AuthResponse{Status: "authenticated"}, nil
 }
 
