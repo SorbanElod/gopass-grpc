@@ -3,8 +3,8 @@ package server
 import (
 	"context"
 	"fmt"
-	"time"
 
+	"github.com/gopasspw/gopass/pkg/ctxutil"
 	"github.com/gopasspw/gopass/pkg/gopass/api"
 	"github.com/gopasspw/gopass/proto"
 )
@@ -13,7 +13,8 @@ import (
 type GopassServer struct {
 	gopass *api.Gopass
 	proto.UnimplementedGopassServiceServer
-	logger Logger
+	logger     Logger
+	passphrase string
 }
 
 // ByteWrapper is a custom type that implements the gopass.Byter interface.
@@ -27,6 +28,8 @@ func (b ByteWrapper) Bytes() []byte {
 // NewGopassServer creates a new server instance.
 func NewGopassServer(logger Logger) (*GopassServer, error) {
 	// Initialize the Gopass API
+	// Set the GOPASS_AGE_PASSWORD environment variable
+
 	gp, err := api.New(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize gopass: %w", err)
@@ -41,6 +44,7 @@ func NewGopassServer(logger Logger) (*GopassServer, error) {
 // Authenticate handles authentication requests.
 func (s *GopassServer) Authenticate(ctx context.Context, req *proto.AuthRequest) (*proto.AuthResponse, error) {
 	// authenticate the user
+	s.passphrase = req.Passphrase
 	return &proto.AuthResponse{Status: "authenticated"}, nil
 }
 
@@ -57,11 +61,21 @@ func (s *GopassServer) ListSecrets(ctx context.Context, req *proto.ListRequest) 
 	}, nil
 }
 
-// GetSecret returns a single encrypted secret.
+// GetSecret returns a single encrypted secret using the configured passphrase
 func (s *GopassServer) GetSecret(ctx context.Context, req *proto.GetRequest) (*proto.GetResponse, error) {
-	// Set a timeout of 60 seconds for the context
-	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
-	defer cancel()
+	// Add our password callback to the incoming context
+	ctx = ctxutil.WithPasswordCallback(ctx, func(string, bool) ([]byte, error) {
+		if s.passphrase == "" {
+			return nil, fmt.Errorf("no passphrase configured")
+		}
+		return []byte(s.passphrase), nil
+	})
+	filename := ""
+	if ctxutil.HasPasswordCallback(ctx) {
+		s.logger.Debugf("Password callback found")
+	}
+	pw, err := ctxutil.GetPasswordCallback(ctx)(filename, false)
+	s.logger.Debugf("Using passphrase: %s", pw)
 	secret, err := s.gopass.Get(ctx, req.Name, req.Revision)
 	if err != nil {
 		s.logger.Errorf("Failed to get secret %s: %v", req.Name, err)
@@ -69,7 +83,7 @@ func (s *GopassServer) GetSecret(ctx context.Context, req *proto.GetRequest) (*p
 	}
 
 	return &proto.GetResponse{
-		Secret: string(secret.Bytes()), // The encrypted secret
+		Secret: string(secret.Bytes()),
 	}, nil
 }
 

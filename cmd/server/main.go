@@ -23,7 +23,6 @@ func main() {
 
 	// Create logger
 	logger := server.NewDefaultLogger(*debugLog)
-
 	// Set up log file if specified
 	if *logFile != "" {
 		logOutput, err := os.OpenFile(*logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
