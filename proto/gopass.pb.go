@@ -533,166 +533,6 @@ func (*RenameResponse) Descriptor() ([]byte, []int) {
 	return file_gopass_proto_rawDescGZIP(), []int{11}
 }
 
-type SyncRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SyncRequest) Reset() {
-	*x = SyncRequest{}
-	mi := &file_gopass_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SyncRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SyncRequest) ProtoMessage() {}
-
-func (x *SyncRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SyncRequest.ProtoReflect.Descriptor instead.
-func (*SyncRequest) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{12}
-}
-
-type SyncResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SyncResponse) Reset() {
-	*x = SyncResponse{}
-	mi := &file_gopass_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SyncResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SyncResponse) ProtoMessage() {}
-
-func (x *SyncResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SyncResponse.ProtoReflect.Descriptor instead.
-func (*SyncResponse) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{13}
-}
-
-type RevisionsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RevisionsRequest) Reset() {
-	*x = RevisionsRequest{}
-	mi := &file_gopass_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RevisionsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RevisionsRequest) ProtoMessage() {}
-
-func (x *RevisionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RevisionsRequest.ProtoReflect.Descriptor instead.
-func (*RevisionsRequest) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *RevisionsRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type RevisionsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Revisions     []string               `protobuf:"bytes,1,rep,name=revisions,proto3" json:"revisions,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RevisionsResponse) Reset() {
-	*x = RevisionsResponse{}
-	mi := &file_gopass_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RevisionsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RevisionsResponse) ProtoMessage() {}
-
-func (x *RevisionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RevisionsResponse.ProtoReflect.Descriptor instead.
-func (*RevisionsResponse) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *RevisionsResponse) GetRevisions() []string {
-	if x != nil {
-		return x.Revisions
-	}
-	return nil
-}
-
 type AuthRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Passphrase    string                 `protobuf:"bytes,1,opt,name=passphrase,proto3" json:"passphrase,omitempty"`
@@ -702,7 +542,7 @@ type AuthRequest struct {
 
 func (x *AuthRequest) Reset() {
 	*x = AuthRequest{}
-	mi := &file_gopass_proto_msgTypes[16]
+	mi := &file_gopass_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -714,7 +554,7 @@ func (x *AuthRequest) String() string {
 func (*AuthRequest) ProtoMessage() {}
 
 func (x *AuthRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[16]
+	mi := &file_gopass_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -727,7 +567,7 @@ func (x *AuthRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthRequest.ProtoReflect.Descriptor instead.
 func (*AuthRequest) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{16}
+	return file_gopass_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *AuthRequest) GetPassphrase() string {
@@ -746,7 +586,7 @@ type AuthResponse struct {
 
 func (x *AuthResponse) Reset() {
 	*x = AuthResponse{}
-	mi := &file_gopass_proto_msgTypes[17]
+	mi := &file_gopass_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -758,7 +598,7 @@ func (x *AuthResponse) String() string {
 func (*AuthResponse) ProtoMessage() {}
 
 func (x *AuthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gopass_proto_msgTypes[17]
+	mi := &file_gopass_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -771,7 +611,7 @@ func (x *AuthResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthResponse.ProtoReflect.Descriptor instead.
 func (*AuthResponse) Descriptor() ([]byte, []int) {
-	return file_gopass_proto_rawDescGZIP(), []int{17}
+	return file_gopass_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *AuthResponse) GetStatus() string {
@@ -809,29 +649,20 @@ const file_gopass_proto_rawDesc = "" +
 	"\rRenameRequest\x12\x10\n" +
 	"\x03src\x18\x01 \x01(\tR\x03src\x12\x12\n" +
 	"\x04dest\x18\x02 \x01(\tR\x04dest\"\x10\n" +
-	"\x0eRenameResponse\"\r\n" +
-	"\vSyncRequest\"\x0e\n" +
-	"\fSyncResponse\"&\n" +
-	"\x10RevisionsRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"1\n" +
-	"\x11RevisionsResponse\x12\x1c\n" +
-	"\trevisions\x18\x01 \x03(\tR\trevisions\"-\n" +
+	"\x0eRenameResponse\"-\n" +
 	"\vAuthRequest\x12\x1e\n" +
 	"\n" +
 	"passphrase\x18\x01 \x01(\tR\n" +
 	"passphrase\"&\n" +
 	"\fAuthResponse\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\tR\x06status2\xc5\x04\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status2\xc1\x03\n" +
 	"\rGopassService\x128\n" +
 	"\vListSecrets\x12\x13.gopass.ListRequest\x1a\x14.gopass.ListResponse\x124\n" +
 	"\tGetSecret\x12\x12.gopass.GetRequest\x1a\x13.gopass.GetResponse\x124\n" +
 	"\tSetSecret\x12\x12.gopass.SetRequest\x1a\x13.gopass.SetResponse\x12=\n" +
 	"\fRemoveSecret\x12\x15.gopass.RemoveRequest\x1a\x16.gopass.RemoveResponse\x12Q\n" +
 	"\x1aRemoveAllSecretsWithPrefix\x12\x18.gopass.RemoveAllRequest\x1a\x19.gopass.RemoveAllResponse\x12=\n" +
-	"\fRenameSecret\x12\x15.gopass.RenameRequest\x1a\x16.gopass.RenameResponse\x127\n" +
-	"\n" +
-	"SyncSecret\x12\x13.gopass.SyncRequest\x1a\x14.gopass.SyncResponse\x12I\n" +
-	"\x12RevisionsOfSercret\x12\x18.gopass.RevisionsRequest\x1a\x19.gopass.RevisionsResponse\x129\n" +
+	"\fRenameSecret\x12\x15.gopass.RenameRequest\x1a\x16.gopass.RenameResponse\x129\n" +
 	"\fAuthenticate\x12\x13.gopass.AuthRequest\x1a\x14.gopass.AuthResponseB\x13Z\b../proto\xaa\x02\x06Gopassb\x06proto3"
 
 var (
@@ -846,7 +677,7 @@ func file_gopass_proto_rawDescGZIP() []byte {
 	return file_gopass_proto_rawDescData
 }
 
-var file_gopass_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_gopass_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_gopass_proto_goTypes = []any{
 	(*ListRequest)(nil),       // 0: gopass.ListRequest
 	(*ListResponse)(nil),      // 1: gopass.ListResponse
@@ -860,12 +691,8 @@ var file_gopass_proto_goTypes = []any{
 	(*RemoveAllResponse)(nil), // 9: gopass.RemoveAllResponse
 	(*RenameRequest)(nil),     // 10: gopass.RenameRequest
 	(*RenameResponse)(nil),    // 11: gopass.RenameResponse
-	(*SyncRequest)(nil),       // 12: gopass.SyncRequest
-	(*SyncResponse)(nil),      // 13: gopass.SyncResponse
-	(*RevisionsRequest)(nil),  // 14: gopass.RevisionsRequest
-	(*RevisionsResponse)(nil), // 15: gopass.RevisionsResponse
-	(*AuthRequest)(nil),       // 16: gopass.AuthRequest
-	(*AuthResponse)(nil),      // 17: gopass.AuthResponse
+	(*AuthRequest)(nil),       // 12: gopass.AuthRequest
+	(*AuthResponse)(nil),      // 13: gopass.AuthResponse
 }
 var file_gopass_proto_depIdxs = []int32{
 	0,  // 0: gopass.GopassService.ListSecrets:input_type -> gopass.ListRequest
@@ -874,20 +701,16 @@ var file_gopass_proto_depIdxs = []int32{
 	6,  // 3: gopass.GopassService.RemoveSecret:input_type -> gopass.RemoveRequest
 	8,  // 4: gopass.GopassService.RemoveAllSecretsWithPrefix:input_type -> gopass.RemoveAllRequest
 	10, // 5: gopass.GopassService.RenameSecret:input_type -> gopass.RenameRequest
-	12, // 6: gopass.GopassService.SyncSecret:input_type -> gopass.SyncRequest
-	14, // 7: gopass.GopassService.RevisionsOfSercret:input_type -> gopass.RevisionsRequest
-	16, // 8: gopass.GopassService.Authenticate:input_type -> gopass.AuthRequest
-	1,  // 9: gopass.GopassService.ListSecrets:output_type -> gopass.ListResponse
-	3,  // 10: gopass.GopassService.GetSecret:output_type -> gopass.GetResponse
-	5,  // 11: gopass.GopassService.SetSecret:output_type -> gopass.SetResponse
-	7,  // 12: gopass.GopassService.RemoveSecret:output_type -> gopass.RemoveResponse
-	9,  // 13: gopass.GopassService.RemoveAllSecretsWithPrefix:output_type -> gopass.RemoveAllResponse
-	11, // 14: gopass.GopassService.RenameSecret:output_type -> gopass.RenameResponse
-	13, // 15: gopass.GopassService.SyncSecret:output_type -> gopass.SyncResponse
-	15, // 16: gopass.GopassService.RevisionsOfSercret:output_type -> gopass.RevisionsResponse
-	17, // 17: gopass.GopassService.Authenticate:output_type -> gopass.AuthResponse
-	9,  // [9:18] is the sub-list for method output_type
-	0,  // [0:9] is the sub-list for method input_type
+	12, // 6: gopass.GopassService.Authenticate:input_type -> gopass.AuthRequest
+	1,  // 7: gopass.GopassService.ListSecrets:output_type -> gopass.ListResponse
+	3,  // 8: gopass.GopassService.GetSecret:output_type -> gopass.GetResponse
+	5,  // 9: gopass.GopassService.SetSecret:output_type -> gopass.SetResponse
+	7,  // 10: gopass.GopassService.RemoveSecret:output_type -> gopass.RemoveResponse
+	9,  // 11: gopass.GopassService.RemoveAllSecretsWithPrefix:output_type -> gopass.RemoveAllResponse
+	11, // 12: gopass.GopassService.RenameSecret:output_type -> gopass.RenameResponse
+	13, // 13: gopass.GopassService.Authenticate:output_type -> gopass.AuthResponse
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -904,7 +727,7 @@ func file_gopass_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gopass_proto_rawDesc), len(file_gopass_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

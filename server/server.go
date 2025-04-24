@@ -70,12 +70,6 @@ func (s *GopassServer) GetSecret(ctx context.Context, req *proto.GetRequest) (*p
 		}
 		return []byte(s.passphrase), nil
 	})
-	filename := ""
-	if ctxutil.HasPasswordCallback(ctx) {
-		s.logger.Debugf("Password callback found")
-	}
-	pw, err := ctxutil.GetPasswordCallback(ctx)(filename, false)
-	s.logger.Debugf("Using passphrase: %s", pw)
 	secret, err := s.gopass.Get(ctx, req.Name, req.Revision)
 	if err != nil {
 		s.logger.Errorf("Failed to get secret %s: %v", req.Name, err)
@@ -133,18 +127,4 @@ func (s *GopassServer) RenameSecret(ctx context.Context, req *proto.RenameReques
 	}
 
 	return &proto.RenameResponse{}, nil
-}
-
-// SyncSecret synchronizes a secret with a remote.
-func (s *GopassServer) SyncSecret(ctx context.Context, req *proto.SyncRequest) (*proto.SyncResponse, error) {
-	// Sync is not implemented in the current API.
-	s.logger.Warnf("Sync secret is not implemented")
-	return nil, fmt.Errorf("sync not implemented")
-}
-
-// RevisionsOfSecret lists all revisions of a secret.
-func (s *GopassServer) RevisionsOfSecret(ctx context.Context, req *proto.RevisionsRequest) (*proto.RevisionsResponse, error) {
-	// Revisions feature is not implemented in the current API.
-	s.logger.Warnf("Revisions not implemented")
-	return nil, fmt.Errorf("revisions not implemented")
 }

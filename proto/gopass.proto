@@ -25,12 +25,6 @@ service GopassService {
     
     // Rename moves a prefix to another.
     rpc RenameSecret (RenameRequest) returns (RenameResponse);
-    
-    // Sync synchronizes a secret with a remote.
-    rpc SyncSecret (SyncRequest) returns (SyncResponse);
-    
-    // Revisions lists all revisions of a secret.
-    rpc RevisionsOfSercret (RevisionsRequest) returns (RevisionsResponse);
 
     // Authenticates the user with the given credentials.
     rpc Authenticate (AuthRequest) returns (AuthResponse);
@@ -78,18 +72,6 @@ message RenameRequest {
 }
 
 message RenameResponse {}
-
-message SyncRequest {}
-
-message SyncResponse {}
-
-message RevisionsRequest {
-    string name = 1;
-}
-
-message RevisionsResponse {
-    repeated string revisions = 1;
-}
 
 message AuthRequest {
     string passphrase = 1;

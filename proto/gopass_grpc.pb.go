@@ -25,8 +25,6 @@ const (
 	GopassService_RemoveSecret_FullMethodName               = "/gopass.GopassService/RemoveSecret"
 	GopassService_RemoveAllSecretsWithPrefix_FullMethodName = "/gopass.GopassService/RemoveAllSecretsWithPrefix"
 	GopassService_RenameSecret_FullMethodName               = "/gopass.GopassService/RenameSecret"
-	GopassService_SyncSecret_FullMethodName                 = "/gopass.GopassService/SyncSecret"
-	GopassService_RevisionsOfSercret_FullMethodName         = "/gopass.GopassService/RevisionsOfSercret"
 	GopassService_Authenticate_FullMethodName               = "/gopass.GopassService/Authenticate"
 )
 
@@ -48,10 +46,6 @@ type GopassServiceClient interface {
 	RemoveAllSecretsWithPrefix(ctx context.Context, in *RemoveAllRequest, opts ...grpc.CallOption) (*RemoveAllResponse, error)
 	// Rename moves a prefix to another.
 	RenameSecret(ctx context.Context, in *RenameRequest, opts ...grpc.CallOption) (*RenameResponse, error)
-	// Sync synchronizes a secret with a remote.
-	SyncSecret(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error)
-	// Revisions lists all revisions of a secret.
-	RevisionsOfSercret(ctx context.Context, in *RevisionsRequest, opts ...grpc.CallOption) (*RevisionsResponse, error)
 	// Authenticates the user with the given credentials.
 	Authenticate(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 }
@@ -124,26 +118,6 @@ func (c *gopassServiceClient) RenameSecret(ctx context.Context, in *RenameReques
 	return out, nil
 }
 
-func (c *gopassServiceClient) SyncSecret(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncResponse)
-	err := c.cc.Invoke(ctx, GopassService_SyncSecret_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *gopassServiceClient) RevisionsOfSercret(ctx context.Context, in *RevisionsRequest, opts ...grpc.CallOption) (*RevisionsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RevisionsResponse)
-	err := c.cc.Invoke(ctx, GopassService_RevisionsOfSercret_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *gopassServiceClient) Authenticate(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AuthResponse)
@@ -172,10 +146,6 @@ type GopassServiceServer interface {
 	RemoveAllSecretsWithPrefix(context.Context, *RemoveAllRequest) (*RemoveAllResponse, error)
 	// Rename moves a prefix to another.
 	RenameSecret(context.Context, *RenameRequest) (*RenameResponse, error)
-	// Sync synchronizes a secret with a remote.
-	SyncSecret(context.Context, *SyncRequest) (*SyncResponse, error)
-	// Revisions lists all revisions of a secret.
-	RevisionsOfSercret(context.Context, *RevisionsRequest) (*RevisionsResponse, error)
 	// Authenticates the user with the given credentials.
 	Authenticate(context.Context, *AuthRequest) (*AuthResponse, error)
 	mustEmbedUnimplementedGopassServiceServer()
@@ -205,12 +175,6 @@ func (UnimplementedGopassServiceServer) RemoveAllSecretsWithPrefix(context.Conte
 }
 func (UnimplementedGopassServiceServer) RenameSecret(context.Context, *RenameRequest) (*RenameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RenameSecret not implemented")
-}
-func (UnimplementedGopassServiceServer) SyncSecret(context.Context, *SyncRequest) (*SyncResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SyncSecret not implemented")
-}
-func (UnimplementedGopassServiceServer) RevisionsOfSercret(context.Context, *RevisionsRequest) (*RevisionsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RevisionsOfSercret not implemented")
 }
 func (UnimplementedGopassServiceServer) Authenticate(context.Context, *AuthRequest) (*AuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authenticate not implemented")
@@ -344,42 +308,6 @@ func _GopassService_RenameSecret_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GopassService_SyncSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GopassServiceServer).SyncSecret(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GopassService_SyncSecret_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GopassServiceServer).SyncSecret(ctx, req.(*SyncRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GopassService_RevisionsOfSercret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RevisionsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GopassServiceServer).RevisionsOfSercret(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GopassService_RevisionsOfSercret_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GopassServiceServer).RevisionsOfSercret(ctx, req.(*RevisionsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _GopassService_Authenticate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AuthRequest)
 	if err := dec(in); err != nil {
@@ -428,14 +356,6 @@ var GopassService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RenameSecret",
 			Handler:    _GopassService_RenameSecret_Handler,
-		},
-		{
-			MethodName: "SyncSecret",
-			Handler:    _GopassService_SyncSecret_Handler,
-		},
-		{
-			MethodName: "RevisionsOfSercret",
-			Handler:    _GopassService_RevisionsOfSercret_Handler,
 		},
 		{
 			MethodName: "Authenticate",
